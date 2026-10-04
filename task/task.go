@@ -66,8 +66,26 @@ func ListAllTask() {
 	var tasks []Task
 	json.Unmarshal(data, &tasks)
 
-	for _, t := range tasks{
+	for _, t := range tasks {
 		fmt.Println(t.Id, t.Description, t.Status)
+	}
+
+}
+
+func ListSomeTask(param string) {
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var tasks []Task
+	json.Unmarshal(data, &tasks)
+
+	for _, t := range tasks {
+		if t.Status == param {
+			fmt.Println(t.Id, t.Description, t.Status)
+		}
 	}
 
 }
@@ -86,14 +104,14 @@ func Start() {
 
 		input := scanner.Text()
 
-		str := strings.Split(input, " ")
-
-		cmd := str[0]
-
-		var param string
-		for i := 1; i < len(str); i++ {
-			param += str[i] + " "
+		fields := strings.Fields(input)
+		if len(fields) == 0 {
+			continue
 		}
+
+		cmd := fields[0]
+
+		param := strings.Join(fields[1:], " ")
 
 		switch cmd {
 		case "add":
@@ -101,9 +119,14 @@ func Start() {
 		case "update":
 		case "delete":
 		case "list":
-			ListAllTask()
-		case "list done":
-		case "list undone":
+			if param == "done" || param == "undone" || param == "in progress" {
+				ListSomeTask(param)
+			} else {
+				ListAllTask()
+			}
+
+		//case "list done":
+		//case "list undone":
 		case "list in progress":
 		case "mark":
 		case "help":

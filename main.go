@@ -1,15 +1,16 @@
 package main
 
-import "os"
+import "github.com/Nepsteren/CLI_TaskTracker.git/task"
 
-func main(){
+func main() {
+	task.Start()
 
-	fileName := "tasks.json"
-	_, err := os.Stat(fileName)
+	// fileName := "tasks.json"
+	// _, err := os.Stat(fileName)
 
-	if os.IsNotExist(err){
-		os.Create(fileName)
-	}
+	// if os.IsNotExist(err){
+	// 	os.Create(fileName)
+	// }
 	// task1 := task.Task{
 	// 	Id: 1,
 	// 	Description: "Description",

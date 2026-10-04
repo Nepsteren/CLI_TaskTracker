@@ -2,11 +2,14 @@ package task
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/Nepsteren/CLI_TaskTracker.git/files"
 	"github.com/Nepsteren/CLI_TaskTracker.git/output"
 )
 
@@ -18,19 +21,67 @@ type Task struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
+var Tasks []Task
+
+func addTask(param string) {
+	now := time.Now()
+	Tasks = append(Tasks, Task{
+		Id:          len(Tasks) + 1,
+		Description: param,
+		Status:      "undone",
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	})
+
+	data, err := json.Marshal(Tasks)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := os.WriteFile("tasks.json", data, 0644); err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+func GetJson() {
+	data, err := os.ReadFile("tasks.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &Tasks)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func Start() {
-	scanner := bufio.NewScanner(os.Stdin)
+	files.CreateOnStart()
+	GetJson()
 	output.GreetingOutput()
+	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
 		fmt.Print("task cli > ")
 		if err := scanner.Scan(); !err {
 			log.Fatal(err)
 		}
-		cmd := scanner.Text()
+
+		input := scanner.Text()
+
+		str := strings.Split(input, " ")
+
+		cmd := str[0]
+
+		var param string
+		for i := 1; i < len(str); i++ {
+			param += str[i] + " "
+		}
 
 		switch cmd {
 		case "add":
+			addTask(param)
 		case "update":
 		case "delete":
 		case "list":

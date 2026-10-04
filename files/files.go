@@ -2,7 +2,6 @@ package files
 
 import (
 	"os"
-
 )
 
 func CreateOnStart() {
@@ -12,6 +11,4 @@ func CreateOnStart() {
 	if os.IsNotExist(err) {
 		os.Create(fileName)
 	}
-
 }
-

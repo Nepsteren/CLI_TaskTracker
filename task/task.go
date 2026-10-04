@@ -21,6 +21,7 @@ type Task struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
+var path = "tasks.json"
 var Tasks []Task
 
 func addTask(param string) {
@@ -38,14 +39,14 @@ func addTask(param string) {
 		log.Fatal(err)
 	}
 
-	if err := os.WriteFile("tasks.json", data, 0644); err != nil {
+	if err := os.WriteFile(path, data, 0644); err != nil {
 		log.Fatal(err)
 	}
 
 }
 
 func GetJson() {
-	data, err := os.ReadFile("tasks.json")
+	data, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,6 +55,21 @@ func GetJson() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func ListAllTask() {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var tasks []Task
+	json.Unmarshal(data, &tasks)
+
+	for _, t := range tasks{
+		fmt.Println(t.Id, t.Description, t.Status)
+	}
+
 }
 
 func Start() {
@@ -85,6 +101,7 @@ func Start() {
 		case "update":
 		case "delete":
 		case "list":
+			ListAllTask()
 		case "list done":
 		case "list undone":
 		case "list in progress":

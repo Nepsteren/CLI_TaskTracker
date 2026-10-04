@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -90,6 +91,53 @@ func ListSomeTask(param string) {
 
 }
 
+func DeleteTask(param string) {
+	id, err := strconv.Atoi(param)
+	if err != nil {
+		fmt.Println("id должно быть числом!")
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var tasks []Task
+	if err := json.Unmarshal(data, &tasks); err != nil {
+		log.Fatal(err)
+	}
+
+	found := -1
+	for i, t := range tasks {
+		if t.Id == id {
+			found = i
+			break
+		}
+	}
+
+	if found == -1 {
+        fmt.Println("задача не найдена")
+        return
+    }
+
+	tasks = append(tasks[:found], tasks[found+1:]...)
+
+	out, err := json.MarshalIndent(tasks, "", "  ")
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	if err := os.WriteFile(path, out, 0644); err != nil{
+		log.Fatal(err)
+	}
+
+	fmt.Println("задача удалена")
+}
+
+func UpdateTask(param string){
+
+}
+
 func Start() {
 	files.CreateOnStart()
 	GetJson()
@@ -118,15 +166,13 @@ func Start() {
 			addTask(param)
 		case "update":
 		case "delete":
+			DeleteTask(param)
 		case "list":
 			if param == "done" || param == "undone" || param == "in progress" {
 				ListSomeTask(param)
 			} else {
 				ListAllTask()
 			}
-
-		//case "list done":
-		//case "list undone":
 		case "list in progress":
 		case "mark":
 		case "help":

@@ -146,11 +146,11 @@ func UpdateTask(param string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	description := strings.Join(str[1:], " ")
 
 	file, err := os.ReadFile(path)
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -175,6 +175,54 @@ func UpdateTask(param string) {
 	if err = os.WriteFile(path, data, 0644); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func MarkTask(param string) {
+	fields := strings.Fields(param)
+
+	if len(fields) < 2 {
+		fmt.Println("not enough param")
+		return
+	}
+
+	ind, err := strconv.Atoi(fields[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	str := strings.Join(fields[1:], " ")
+
+	file, err := os.ReadFile(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var tasks []Task
+	err = json.Unmarshal(file, &tasks)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if str == "done" || str == "undone" || str == "in progress" {
+		for i := 0; i < len(tasks); i++ {
+			if tasks[i].Id == ind {
+				tasks[i].Status = str
+				fmt.Println("статус обновлен")
+			}
+		}
+	} else {
+		fmt.Println("wrong status")
+	}
+
+	data, err := json.MarshalIndent(tasks, "", " ")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := os.WriteFile(path, data, 0644); err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 func Start() {
@@ -213,8 +261,8 @@ func Start() {
 			} else {
 				ListAllTask()
 			}
-		case "list in progress":
 		case "mark":
+			MarkTask(param)
 		case "help":
 			output.HelpOutput()
 		case "exit":

@@ -116,26 +116,65 @@ func DeleteTask(param string) {
 	}
 
 	if found == -1 {
-        fmt.Println("задача не найдена")
-        return
-    }
+		fmt.Println("задача не найдена")
+		return
+	}
 
 	tasks = append(tasks[:found], tasks[found+1:]...)
 
 	out, err := json.MarshalIndent(tasks, "", "  ")
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := os.WriteFile(path, out, 0644); err != nil{
+	if err := os.WriteFile(path, out, 0644); err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Println("задача удалена")
 }
 
-func UpdateTask(param string){
+func UpdateTask(param string) {
+	str := strings.Fields(param)
 
+	if len(str) < 2 {
+		fmt.Println("not enough param")
+		return
+	}
+
+	ind, err := strconv.Atoi(str[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	description := strings.Join(str[1:], " ")
+
+	file, err := os.ReadFile(path)
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	var tasks []Task
+	err = json.Unmarshal(file, &tasks)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for i := 0; i < len(tasks); i++ {
+		if tasks[i].Id == ind {
+			tasks[i].Description = description
+			fmt.Println("задача обновлена")
+		}
+	}
+
+	data, err := json.MarshalIndent(tasks, "", "  ")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err = os.WriteFile(path, data, 0644); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func Start() {
@@ -165,6 +204,7 @@ func Start() {
 		case "add":
 			addTask(param)
 		case "update":
+			UpdateTask(param)
 		case "delete":
 			DeleteTask(param)
 		case "list":

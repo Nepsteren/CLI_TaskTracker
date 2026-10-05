@@ -1,23 +1,9 @@
 [
- {
-  "id": 2,
-  "description": "done",
-  "status": "in progress",
-  "createdAt": "2026-10-04T19:18:08.641876+05:00",
-  "updatedAt": "2026-10-04T19:18:08.641876+05:00"
- },
- {
-  "id": 3,
-  "description": "undone",
-  "status": "done",
-  "createdAt": "2026-10-04T19:18:11.700445+05:00",
-  "updatedAt": "2026-10-04T19:18:11.700445+05:00"
- },
- {
-  "id": 4,
-  "description": "djdjdjdjjd ",
-  "status": "undone",
-  "createdAt": "2026-10-04T19:18:26.705675+05:00",
-  "updatedAt": "2026-10-04T19:18:26.705675+05:00"
- }
+  {
+    "id": 2,
+    "description": "cook",
+    "status": "done",
+    "createdAt": "2026-10-05T15:38:47.733107+05:00",
+    "updatedAt": "2026-10-05T15:38:47.733107+05:00"
+  }
 ]

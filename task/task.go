@@ -35,18 +35,11 @@ func addTask(param string) {
 		UpdatedAt:   now,
 	})
 
-	data, err := json.Marshal(Tasks)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := os.WriteFile(path, data, 0644); err != nil {
-		log.Fatal(err)
-	}
+	WriteFile()
 
 }
 
-func GetJson() {
+func GetFile() {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
@@ -58,32 +51,28 @@ func GetJson() {
 	}
 }
 
-func ListAllTask() {
-	data, err := os.ReadFile(path)
+func WriteFile() {
+	out, err := json.MarshalIndent(Tasks, "", "  ")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var tasks []Task
-	json.Unmarshal(data, &tasks)
+	if err := os.WriteFile(path, out, 0644); err != nil {
+		log.Fatal(err)
+	}
+}
 
-	for _, t := range tasks {
+func ListAllTask() {
+	GetFile()
+	for _, t := range Tasks {
 		fmt.Println(t.Id, t.Description, t.Status)
 	}
 
 }
 
 func ListSomeTask(param string) {
-
-	data, err := os.ReadFile(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var tasks []Task
-	json.Unmarshal(data, &tasks)
-
-	for _, t := range tasks {
+	GetFile()
+	for _, t := range Tasks {
 		if t.Status == param {
 			fmt.Println(t.Id, t.Description, t.Status)
 		}
@@ -97,18 +86,10 @@ func DeleteTask(param string) {
 		fmt.Println("id должно быть числом!")
 	}
 
-	data, err := os.ReadFile(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var tasks []Task
-	if err := json.Unmarshal(data, &tasks); err != nil {
-		log.Fatal(err)
-	}
+	GetFile()
 
 	found := -1
-	for i, t := range tasks {
+	for i, t := range Tasks {
 		if t.Id == id {
 			found = i
 			break
@@ -120,16 +101,9 @@ func DeleteTask(param string) {
 		return
 	}
 
-	tasks = append(tasks[:found], tasks[found+1:]...)
+	Tasks = append(Tasks[:found], Tasks[found+1:]...)
 
-	out, err := json.MarshalIndent(tasks, "", "  ")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := os.WriteFile(path, out, 0644); err != nil {
-		log.Fatal(err)
-	}
+	WriteFile()
 
 	fmt.Println("задача удалена")
 }
@@ -149,32 +123,16 @@ func UpdateTask(param string) {
 
 	description := strings.Join(str[1:], " ")
 
-	file, err := os.ReadFile(path)
-	if err != nil {
-		log.Fatal(err)
-	}
+	GetFile()
 
-	var tasks []Task
-	err = json.Unmarshal(file, &tasks)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for i := 0; i < len(tasks); i++ {
-		if tasks[i].Id == ind {
-			tasks[i].Description = description
+	for i := 0; i < len(Tasks); i++ {
+		if Tasks[i].Id == ind {
+			Tasks[i].Description = description
 			fmt.Println("задача обновлена")
 		}
 	}
 
-	data, err := json.MarshalIndent(tasks, "", "  ")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err = os.WriteFile(path, data, 0644); err != nil {
-		log.Fatal(err)
-	}
+	WriteFile()
 }
 
 func MarkTask(param string) {
@@ -192,21 +150,12 @@ func MarkTask(param string) {
 
 	str := strings.Join(fields[1:], " ")
 
-	file, err := os.ReadFile(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var tasks []Task
-	err = json.Unmarshal(file, &tasks)
-	if err != nil {
-		log.Fatal(err)
-	}
+	GetFile()
 
 	if str == "done" || str == "undone" || str == "in progress" {
-		for i := 0; i < len(tasks); i++ {
-			if tasks[i].Id == ind {
-				tasks[i].Status = str
+		for i := 0; i < len(Tasks); i++ {
+			if Tasks[i].Id == ind {
+				Tasks[i].Status = str
 				fmt.Println("статус обновлен")
 			}
 		}
@@ -214,20 +163,12 @@ func MarkTask(param string) {
 		fmt.Println("wrong status")
 	}
 
-	data, err := json.MarshalIndent(tasks, "", " ")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := os.WriteFile(path, data, 0644); err != nil {
-		log.Fatal(err)
-	}
-
+	WriteFile()
 }
 
 func Start() {
 	files.CreateOnStart()
-	GetJson()
+	GetFile()
 	output.GreetingOutput()
 	scanner := bufio.NewScanner(os.Stdin)
 

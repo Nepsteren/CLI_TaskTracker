@@ -11,23 +11,16 @@ import (
 	"time"
 
 	"github.com/Nepsteren/CLI_TaskTracker.git/files"
+	"github.com/Nepsteren/CLI_TaskTracker.git/model"
 	"github.com/Nepsteren/CLI_TaskTracker.git/output"
 )
 
-type Task struct {
-	Id          int       `json:"id"`
-	Description string    `json:"description"`
-	Status      string    `json:"status"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
-}
-
 var path = "tasks.json"
-var Tasks []Task
+var Tasks []model.Task
 
 func addTask(param string) {
 	now := time.Now()
-	Tasks = append(Tasks, Task{
+	Tasks = append(Tasks, model.Task{
 		Id:          len(Tasks) + 1,
 		Description: param,
 		Status:      "undone",

@@ -23,7 +23,7 @@ func addTask(param string) {
 	Tasks = append(Tasks, model.Task{
 		Id:          len(Tasks) + 1,
 		Description: param,
-		Status:      "undone",
+		Status:      model.StatusUndone,
 		CreatedAt:   now,
 		UpdatedAt:   now,
 	})
@@ -56,7 +56,6 @@ func WriteFile() {
 }
 
 func ListAllTask() {
-	GetFile()
 	for _, t := range Tasks {
 		fmt.Println(t.Id, t.Description, t.Status)
 	}
@@ -65,12 +64,14 @@ func ListAllTask() {
 
 func ListSomeTask(param string) {
 	GetFile()
-	for _, t := range Tasks {
-		if t.Status == param {
-			fmt.Println(t.Id, t.Description, t.Status)
+	status := model.Status(param)
+	if status.Valid() {
+		for _, t := range Tasks {
+			if t.Status == status {
+				fmt.Println(t.Id, t.Description, t.Status)
+			}
 		}
 	}
-
 }
 
 func DeleteTask(param string) {
@@ -78,8 +79,6 @@ func DeleteTask(param string) {
 	if err != nil {
 		fmt.Println("id должно быть числом!")
 	}
-
-	GetFile()
 
 	found := -1
 	for i, t := range Tasks {
@@ -116,8 +115,6 @@ func UpdateTask(param string) {
 
 	description := strings.Join(str[1:], " ")
 
-	GetFile()
-
 	for i := 0; i < len(Tasks); i++ {
 		if Tasks[i].Id == ind {
 			Tasks[i].Description = description
@@ -143,15 +140,16 @@ func MarkTask(param string) {
 
 	str := strings.Join(fields[1:], " ")
 
-	GetFile()
+	status := model.Status(str)
+	if status.Valid() {
 
-	if str == "done" || str == "undone" || str == "in progress" {
 		for i := 0; i < len(Tasks); i++ {
 			if Tasks[i].Id == ind {
-				Tasks[i].Status = str
+				Tasks[i].Status = status
 				fmt.Println("статус обновлен")
 			}
 		}
+
 	} else {
 		fmt.Println("wrong status")
 	}

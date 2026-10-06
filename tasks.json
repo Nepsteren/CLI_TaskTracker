@@ -1,13 +1,6 @@
 [
   {
     "id": 2,
-    "description": "cook",
-    "status": "done",
-    "createdAt": "2026-10-05T15:38:47.733107+05:00",
-    "updatedAt": "2026-10-05T15:38:47.733107+05:00"
-  },
-  {
-    "id": 2,
     "description": "clean",
     "status": "undone",
     "createdAt": "2026-10-06T12:35:23.511604+05:00",
@@ -19,5 +12,12 @@
     "status": "undone",
     "createdAt": "2026-10-06T12:50:17.495848+05:00",
     "updatedAt": "2026-10-06T12:50:17.495848+05:00"
+  },
+  {
+    "id": 4,
+    "description": "programming",
+    "status": "undone",
+    "createdAt": "2026-10-06T13:25:47.767517+05:00",
+    "updatedAt": "2026-10-06T13:25:47.767517+05:00"
   }
 ]
